@@ -1,131 +1,59 @@
-//variables
+const readline = require('readline');
+const Player = require('./player');
+
+const player1 = new Player('1');
+const player2 = new Player('2');
+
+// tests
 
 
-//variable for player
-var player1 = {
-  //board state
-  "board": [],
-  //ships state
-  "ships": []
+player1.initEmptyBoard('self', 10);
+player1.initEmptyBoard('enemy', 10);
+player1.placeShip('Cruiser', [3, 5], 'right');
+player1.placeShip('Battleship', [1, 3], 'left');
+player1.placeShip('Carrier', [4, 3], 'down');
+player1.placeShip('Submarine', [9, 8], 'up');
+player1.placeShip('Destroyer', [0, 9], 'down');
 
-};
+player2.initEmptyBoard('self', 10);
+player2.placeShip('Cruiser', [3, 5], 'right');
+player2.placeShip('Battleship', [1, 3], 'left');
+player2.placeShip('Carrier', [4, 3], 'down');
+player2.placeShip('Submarine', [9, 8], 'up');
+player2.placeShip('Destroyer', [0, 9], 'down');
+// console.log(player2);
 
-
-
-//functions
-
-//displays current board state
-function drawBoard(player){
-  console.log(player.board);
-}
-
-//creates an empty board
-function initEmptyBoard(player, size){
-  for (var x = 0; x < size; x++){
-    var row = [];
-    for (var y = 0; y < size; y++){
-      row.push(0);
-    }
-    player.board.push(row);
-  }
-}
-
-function initShipObj(player, shipSize, shipCoords){
-  player.ships.push({
-    'size': shipSize,
-    'placed': true,
-    'damage': 0,
-    'sunk': false,
-    'coords': shipCoords.slice(0)
-  });
-}
-//places a ship of a given size, start coordinate and direction on the board
-function placeShip(player, shipSize, startCoord, direction){
-  var endCoord = shipEndCoord(shipSize, startCoord, direction);
-  var x = shipCoords(startCoord, endCoord, direction).slice(0);
-
-  if (checkShipValidity(player.board, shipSize, startCoord, direction) && checkShipCollision(player, x)){
-    initShipObj(player, shipSize, x);
-    for (var i = 0; i < x.length; i++){
-      player.board[x[i][0]][x[i][1]] = 1;
-    }
-    //logic for ship placement: fills coordinates between start and end coordinates
-  } else {
-      console.log('invalid placement');
-  }
-}
-
-function checkShipCollision(player, shipCoords){
-  for (var i = 0; i < shipCoords.length; i++){
-    if (player.board[shipCoords[i][0]][shipCoords[i][1]] === 1){
-      return false;
-    }
-  }
-  return true;
-}
-
-function shipCoords(startCoord, endCoord, direction){
-  var shipCoords = [];
-  if (direction == 'up'){
-    for (var i = startCoord[0]; i > endCoord[0]; i--){
-      shipCoords.push([i, startCoord[1]]);
-    }
-  } else if (direction == 'down'){
-    for (var i = startCoord[0]; i < endCoord[0]; i++){
-      shipCoords.push([i, startCoord[1]]);
-    }
-  } else if (direction == 'left'){
-    for (var i = startCoord[1]; i > endCoord[1]; i--){
-      shipCoords.push([startCoord[0], i]);
-    }
-  } else if (direction == 'right'){
-    for (var i = startCoord[1]; i < endCoord[1]; i++){
-      shipCoords.push([startCoord[0], i]);
-
-    }
-  }
-  return shipCoords;
-}
-
-function checkShipValidity(board, shipSize, startCoord, direction){
-  var endCoord = shipEndCoord(shipSize, startCoord, direction);
-  if (outOfBounds(board, startCoord)){
-    console.log('ship start location is out of bounds');
-    return false;
-  }
-  if (outOfBounds(board, endCoord)){
-    console.log('ship end location is out of bounds');
-    return false;
-  }
-
-  return true;
-}
-
-function outOfBounds(board, coord){
-  return (!(coord[0] >= 0 && coord[0] <= board.length) || !(coord[1] >= 0 && coord[1] <= board[0].length)) ? true : false;
-}
-
-function shipEndCoord(shipSize, startCoord, direction){
-  var endCoord = startCoord.slice(0);
-  if (direction == 'up'){
-    endCoord[0] -= shipSize;
-  } else if (direction == 'down'){
-    endCoord[0] += shipSize;
-  } else if (direction == 'left'){
-    endCoord[1] -= shipSize;
-  } else if (direction == 'right'){
-    endCoord[1] += shipSize;
-  }
-
-  return endCoord;
-}
+player1.checkHit(player2, [3, 5]);
+player1.checkHit(player2, [3, 6]);
+player1.checkHit(player2, [3, 7]);
+player1.checkHit(player2, [4, 5]);
+player1.checkHit(player2, [5, 5]);
+player1.checkHit(player2, [6, 5]);
+player1.checkHit(player2, [7, 5]);
+player1.checkHit(player2, [8, 5]);
+console.log(player1.board);
+console.log(player1.enemyBoard);
+console.log(player2.board);
+console.log(player2.ships);
 
 
-//tests
-initEmptyBoard(player1, 10);
-placeShip(player1, 3, [3,5], 'right');
-placeShip(player1, 3, [3,5], 'left');
-//placeShip(player1, 3, [3,5], 'down');
-drawBoard(player1);
-console.log(player1);
-console.log(player1.ships[0].coords);
+// console.log(player1.ships.Battleship.coordinates);
+// console.log(player1.ships[0].coords);
+
+
+/* Implementation of console inputs  - to do later
+// const initialize = readline.createInterface({
+//   input: process.stdin,
+//   output: process.stdout,
+// });
+
+// initialize.question('Please place the carrier and indicate
+// which direction to place it [up, down, left, right]', (coord)
+// => {
+//   player1.placeShip(5, coord[0], coord[1]);
+//   console.log(coord[0]);
+//   console.log(coord[1]);
+//   player1.drawBoard();
+//   initialize.close();
+// });
+*/
