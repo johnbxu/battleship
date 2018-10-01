@@ -1,5 +1,5 @@
-const readline = require('readline');
 const Player = require('./player');
+
 
 const player1 = new Player('1');
 const player2 = new Player('2');
@@ -23,18 +23,57 @@ player2.placeShip('Submarine', [9, 8], 'up');
 player2.placeShip('Destroyer', [0, 9], 'down');
 // console.log(player2);
 
-player1.checkHit(player2, [3, 5]);
-player1.checkHit(player2, [3, 6]);
-player1.checkHit(player2, [3, 7]);
-player1.checkHit(player2, [4, 5]);
-player1.checkHit(player2, [5, 5]);
-player1.checkHit(player2, [6, 5]);
-player1.checkHit(player2, [7, 5]);
-player1.checkHit(player2, [8, 5]);
+// player1.checkHit(player2, [3, 5]);
+// player1.checkHit(player2, [3, 6]);
+// player1.checkHit(player2, [3, 7]);
+// player1.checkHit(player2, [4, 5]);
+// player1.checkHit(player2, [5, 5]);
+// player1.checkHit(player2, [6, 5]);
+// player1.checkHit(player2, [7, 5]);
+// player1.checkHit(player2, [8, 5]);
+player1.checkHit(player2, player1.randomHit());
+player1.checkHit(player2, player1.randomHit());
+player1.checkHit(player2, player1.randomHit());
+player1.checkHit(player2, player1.randomHit());
+player1.checkHit(player2, player1.randomHit());
+player1.checkHit(player2, player1.randomHit());
+player1.checkHit(player2, player1.randomHit());
+player1.checkHit(player2, player1.randomHit());
+player1.checkHit(player2, player1.randomHit());
+player1.checkHit(player2, player1.randomHit());
+player1.checkHit(player2, player1.randomHit());
+player1.checkHit(player2, player1.randomHit());
+player1.checkHit(player2, player1.randomHit());
+player1.checkHit(player2, player1.randomHit());
+player1.checkHit(player2, player1.randomHit());
+player1.checkHit(player2, player1.randomHit());
+player1.checkHit(player2, player1.randomHit());
+player1.checkHit(player2, player1.randomHit());
+player1.checkHit(player2, player1.randomHit());
+player1.checkHit(player2, player1.randomHit());
+player1.checkHit(player2, player1.randomHit());
+player1.checkHit(player2, player1.randomHit());
+player1.checkHit(player2, player1.randomHit());
+player1.checkHit(player2, player1.randomHit());
+player1.checkHit(player2, player1.randomHit());
+player1.checkHit(player2, player1.randomHit());
+player1.checkHit(player2, player1.randomHit());
+player1.checkHit(player2, player1.randomHit());
+player1.checkHit(player2, player1.randomHit());
+player1.checkHit(player2, player1.randomHit());
+console.log('------------player 1 board--------------');
 console.log(player1.board);
+console.log('----------------------------------------');
+console.log('------------player 1 enemy board--------');
 console.log(player1.enemyBoard);
-console.log(player2.board);
-console.log(player2.ships);
+console.log('----------------------------------------');
+
+// console.log('------------player 2 board--------------');
+// console.log(player2.board);
+// console.log('----------------------------------------');
+// console.log('------------player 2 ships--------------');
+// console.log(player2.ships);
+// console.log('----------------------------------------');
 
 
 // console.log(player1.ships.Battleship.coordinates);
@@ -57,3 +96,14 @@ console.log(player2.ships);
 //   initialize.close();
 // });
 */
+
+
+// execution
+// player1.initEmptyBoard('self', 10);
+// player1.initEmptyBoard('enemy', 10);
+// player2.initEmptyBoard('self', 10);
+
+
+
+
+

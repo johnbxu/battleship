@@ -11,6 +11,16 @@
 * implement later: auto placement of ships
 
 ##playing phase
+while (!gameEnd) {
+  while (turn === p1) {
+    player 1's turn
+  }
+}
+  while (turn === p2) {
+    player 2's turn
+  }
+}
+
 ###player 1 turn:
 * pick a coordinate
   * check if within bounds => if false, ask again

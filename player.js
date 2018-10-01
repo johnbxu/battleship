@@ -1,9 +1,17 @@
 class Player {
   constructor(name) {
-    this.name = "Player_" + name;
+    this.name = `Player_ ${name}`;
     this.boardSize = 0;
     this.board = []; // board state
     this.enemyBoard = []; // player's view of enemy board
+    // onTheHunt AI object (implement later)
+    this.hunt = {
+      hunt: false,
+      huntDirection: '',
+      huntHistory: [],
+      nextHunt: [],
+    };
+    this.shotsHistory = [];
     // ships state
     this.ships = {
       Carrier: {
@@ -47,10 +55,7 @@ class Player {
         coordinates: [],
       },
     };
-    // this.allPlaced = function allPlaced() {
-    //   for (ship in this.ships)
-    // };
-    // displays current board state
+    // helper function to log board state
     this.drawBoard = function drawBoard(player) {
       console.log([player].board);
     };
@@ -61,16 +66,18 @@ class Player {
       const shipCoordsArray = this.shipCoords(startCoord, endCoord, direction).slice(0);
       if (this.ships[shipName].placed) {
         console.log('This ship was placed already');
-      } else if (this.checkShipValidity(shipSize, startCoord, direction) && this.checkShipCollision(shipCoordsArray)) {
+      } else if (this.checkShipValidity(shipSize, startCoord, direction)
+        && this.checkShipCollision(shipCoordsArray)) {
         this.initShip(shipName, shipCoordsArray);
+        // logic for ship placement: fills coordinates between start and end coordinates
         for (let i = 0; i < shipCoordsArray.length; i += 1) {
           this.board[shipCoordsArray[i][0]][shipCoordsArray[i][1]] = 1;
         }
-        // logic for ship placement: fills coordinates between start and end coordinates
       } else {
         console.log('invalid placement');
       }
     };
+    // creates an empty board
     this.initEmptyBoard = function initEmptyBoard(player, size) {
       if (player === 'self') {
         for (let x = 0; x < size; x += 1) {
@@ -92,10 +99,12 @@ class Player {
         }
       }
     };
+    // initiates coordinates for a ship after placement and changes placement status
     this.initShip = function initShip(shipName, shipCoordsArray) {
       this.ships[shipName].coordinates = [...shipCoordsArray];
       this.ships[shipName].placed = true;
     };
+    // during placement of a ship, checks if a ship is already present
     this.checkShipCollision = function checkShipCollision(shipCoords) {
       for (let i = 0; i < shipCoords.length; i += 1) {
         if (this.board[shipCoords[i][0]][shipCoords[i][1]] === 1) {
@@ -104,6 +113,7 @@ class Player {
       }
       return true;
     };
+    // takes start + end coordinates and generates all coordinates for the ship
     this.shipCoords = function shipCoords(startCoord, endCoord, direction) {
       const shipCoords = [];
       if (direction === 'up') {
@@ -125,6 +135,7 @@ class Player {
       }
       return shipCoords;
     };
+    // checks if ship placement will be out of bounds
     this.checkShipValidity = function checkShipValidity(shipSize, startCoord, direction) {
       const endCoord = this.shipEndCoord(shipSize, startCoord, direction);
       if (this.outOfBounds(startCoord)) {
@@ -138,10 +149,12 @@ class Player {
 
       return true;
     };
+    // helper function for checking if ship is out of bounds
     this.outOfBounds = function checkShipValidity(coord) {
       return (!(coord[0] >= 0 && coord[0] <= this.board.length)
         || !(coord[1] >= 0 && coord[1] <= this.board[0].length));
     };
+    // takes ship size, start coordinate and direction, and generates end coordinate
     this.shipEndCoord = function shipEndCoord(shipSize, startCoord, direction) {
       const endCoord = startCoord.slice(0);
       if (direction === 'up') {
@@ -155,11 +168,8 @@ class Player {
       }
       return endCoord;
     };
+    // player takes a shot at enemy coordinate, and checks if hit or miss. If hit, update boards
     this.checkHit = function checkHit(player, coord) {
-      // check if coord is contained in their board
-      // update enemy board based on result
-      // update enemy ship states on hit
-      // pass turn
       const y = coord[0];
       const x = coord[1];
       if (player.board[y][x] === 1) {
@@ -167,26 +177,46 @@ class Player {
         player.board[y][x] = 2;
         console.log('Hit!');
         this.updateEnemyShip(player, coord);
+        this.shotsHistory.push(coord);
         return true;
       }
       console.log('Miss');
       this.enemyBoard[y][x] = 3;
       return false;
     };
+    // updates enemy player's board and ship states to reflect a hit
     this.updateEnemyShip = function updateEnemyShip(player, coord) {
       // const y = coord[0];
       // const x = coord[1];
-      for (let ship in player.ships) {
+      Object.keys(player.ships).forEach((ship) => {
         const shipCoords = JSON.stringify(player.ships[ship].coordinates);
         const shipCoord = JSON.stringify(coord);
-        if (shipCoords.indexOf(shipCoord) != -1) {
+        if (shipCoords.indexOf(shipCoord) !== -1) {
           player.ships[ship].damage += 1;
         }
         if (player.ships[ship].damage === player.ships[ship].size) {
           player.ships[ship].sunk = true;
         }
+      });
+    };
+    // // onTheHuntAI behaviour (implement later)
+    // this.checkHunt = function checkHunt() {
+    //   if (this.hunt === true) {
+
+    //   }
+    // };
+    this.randomHit = () => {
+      let randomCoord = [Math.floor(Math.random() * 10), Math.floor(Math.random() * 10)];
+      while (JSON.stringify(this.shotsHistory).indexOf(JSON.stringify(randomCoord)) !== -1) {
+        randomCoord = [Math.floor(Math.random() * 10), Math.floor(Math.random() * 10)];
       }
-    }
+      console.log(randomCoord);
+      return randomCoord;
+    };
+    // // place a ship in a random coordinate (to implement later)
+    // this.placeRandomShip = (shipName) {
+
+    // }
   }
 }
 

@@ -1,1 +1,378 @@
-board.html
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Battleships</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<style>
+</style>
+
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+
+
+
+
+
+
+
+
+
+<body>
+  <div id="main">
+    <h1>
+      BATTLESHIPS
+    </h1>
+    <div class="board">
+      <div class="displays">
+        <h4>Player's board</h2>
+        <div class="top">
+          <table class="toptable">
+            <tr>
+              <th></th>
+              <th>1</th>
+              <th>2</th>
+              <th>3</th>
+              <th>4</th>
+              <th>5</th>
+              <th>6</th>
+              <th>7</th>
+              <th>8</th>
+              <th>9</th>
+              <th>10</th>
+            </tr>
+            <tr>
+              <th>A</th>
+              <th id="00"></th>
+              <th id="01"></th>
+              <th id="02"></th>
+              <th id="03"></th>
+              <th id="04"></th>
+              <th id="05"></th>
+              <th id="06"></th>
+              <th id="07"></th>
+              <th id="08"></th>
+              <th id="09"></th>
+            </tr>
+            <tr>
+              <th>B</th>
+              <th id="10"></th>
+              <th id="11"></th>
+              <th id="12"></th>
+              <th id="13"></th>
+              <th id="14"></th>
+              <th id="15"></th>
+              <th id="16"></th>
+              <th id="17"></th>
+              <th id="18"></th>
+              <th id="19"></th>
+            </tr>
+            <tr>
+              <th>C</th>
+              <th id="20"></th>
+              <th id="21"></th>
+              <th id="22"></th>
+              <th id="23"></th>
+              <th id="24"></th>
+              <th id="25"></th>
+              <th id="26"></th>
+              <th id="27"></th>
+              <th id="28"></th>
+              <th id="29"></th>
+            </tr>
+            <tr>
+              <th>D</th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+            </tr>
+            <tr>
+              <th>E</th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+            </tr>
+            <tr>
+              <th>F</th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+            </tr>
+            <tr>
+              <th>G</th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+            </tr>
+            <tr>
+              <th>H</th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+            </tr>
+            <tr>
+              <th>I</th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+            </tr>
+            <tr>
+              <th>J</th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+            </tr>
+
+          </table>
+        </div>
+        <h4>Enemy's board</h4>
+        <div class="bottom">
+          <table>
+            <tr>
+              <th></th>
+              <th>1</th>
+              <th>2</th>
+              <th>3</th>
+              <th>4</th>
+              <th>5</th>
+              <th>6</th>
+              <th>7</th>
+              <th>8</th>
+              <th>9</th>
+              <th>10</th>
+            </tr>
+            <tr>
+              <th>A</th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+            </tr>
+            <tr>
+              <th>B</th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+            </tr>
+            <tr>
+              <th>C</th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+            </tr>
+            <tr>
+              <th>D</th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+            </tr>
+            <tr>
+              <th>E</th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+            </tr>
+            <tr>
+              <th>F</th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+            </tr>
+            <tr>
+              <th>G</th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+            </tr>
+            <tr>
+              <th>H</th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+            </tr>
+            <tr>
+              <th>I</th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+            </tr>
+            <tr>
+              <th>J</th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+            </tr>
+
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="topPanel">
+        <div class="layout">
+          <div class='buttons one'>One-Player</div>
+          <div class='buttons multi'>Two-Player</div>
+        </div>
+      </div>
+      <div class='console'>
+        <span class='text'></span></div>
+    </div>
+  </div>
+  <script>
+
+    // $(document).ready(function() {
+    //   for (let i = 0; i < 11; i++) {
+    //     for (let j = 0; j < 11; j++) {
+    //       $(".grid").append("<li class='points offset1 " + i + "'>");
+    //     }
+
+    //   }
+    // })
+
+
+    //   for (var i = 1; i <= 100; i++) {
+    //     // The number and letter designators
+    //     if (i < 11) {
+    //       $(".top").prepend("<span class='aTops'>" + Math.abs(i - 11) + "</span>");
+    //       $(".bottom").prepend("<span class='aTops'>" + Math.abs(i - 11) + "</span>");
+    //       $(".grid").append("<li class='points offset1 " + i + "'>");
+    //     } else {
+    //       $(".grid").append("<li class='points offset2 " + i + "'>");
+    //     }
+    //     if (i == 11) {
+    //       $(".top").prepend("<span class='aTops hidezero'>" + Math.abs(i - 11) + "</span>");
+    //       $(".bottom").prepend("<span class='aTops hidezero'>" + Math.abs(i - 11) + "</span>");
+    //     }
+    //     if (i > 90) {
+    //       $(".top").append("<span class='aLeft'>" +
+    //                 String.fromCharCode(97 + (i - 91)).toUpperCase() + "</span>");
+    //       $(".bottom").append("<span class='aLeft'>" +
+    //                 String.fromCharCode(97 + (i - 91)).toUpperCase() + "</span>");
+    //     }
+    //   }
+    //   $(".text").text(output.welcome);
+    // })
+
+  </script>
+</body>
+
+</html>
