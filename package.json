@@ -1,0 +1,19 @@
+{
+  "name": "battleship",
+  "version": "1.0.0",
+  "description": "## Summary",
+  "main": "logic.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/johnbxu/battleship.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/johnbxu/battleship/issues"
+  },
+  "homepage": "https://github.com/johnbxu/battleship#readme"
+}
