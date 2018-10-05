@@ -116,17 +116,9 @@ class Player {
     // takes start + end coordinates and generates all coordinates for the ship
     this.shipCoords = function shipCoords(startCoord, endCoord, direction) {
       const shipCoords = [];
-      if (direction === 'up') {
-        for (let i = startCoord[0]; i >= endCoord[0]; i -= 1) {
-          shipCoords.push([i, startCoord[1]]);
-        }
-      } else if (direction === 'down') {
+      if (direction === 'down') {
         for (let i = startCoord[0]; i <= endCoord[0]; i += 1) {
           shipCoords.push([i, startCoord[1]]);
-        }
-      } else if (direction === 'left') {
-        for (let i = startCoord[1]; i >= endCoord[1]; i -= 1) {
-          shipCoords.push([startCoord[0], i]);
         }
       } else if (direction === 'right') {
         for (let i = startCoord[1]; i <= endCoord[1]; i += 1) {
@@ -150,19 +142,15 @@ class Player {
       return true;
     };
     // helper function for checking if ship is out of bounds
-    this.outOfBounds = function checkShipValidity(coord) {
+    this.outOfBounds = function outOfBounds(coord) {
       return (!(coord[0] >= 0 && coord[0] <= this.board.length)
         || !(coord[1] >= 0 && coord[1] <= this.board[0].length));
     };
     // takes ship size, start coordinate and direction, and generates end coordinate
     this.shipEndCoord = function shipEndCoord(shipSize, startCoord, direction) {
       const endCoord = startCoord.slice(0);
-      if (direction === 'up') {
-        endCoord[0] -= shipSize - 1;
-      } else if (direction === 'down') {
+      if (direction === 'down') {
         endCoord[0] += shipSize - 1;
-      } else if (direction === 'left') {
-        endCoord[1] -= shipSize - 1;
       } else if (direction === 'right') {
         endCoord[1] += shipSize - 1;
       }
@@ -221,3 +209,41 @@ class Player {
 }
 
 module.exports = Player;
+
+
+const hunt = {
+  hunt: false,
+  huntStage: 0,
+  huntDirection: '',
+  huntPossibilities: ['up', 'down', 'left', 'right'],
+  hunts: [],
+  huntHits: [],
+};
+const randomHuntDirection = (directions) => directions[Math.floor(Math.random()*4)];
+const deleteDirection = (directions, direction) => directions.filter(d => d !== direction);
+const pickRandomCoord = (coords) => {
+  return coords[Math.floor(Math.random() * coords.length)];
+};
+
+const pickNextHit = (board) => {
+  const possibles = [];
+  for (let i = 0; i < board.length; i += 1) {
+    for (let j = 0; j < board.length; j += 1) {
+      if (board[i][j] === 0) { possibles.push ([i, j]); }
+    }
+  }
+  return pickRandomCoord(possibles);
+};
+const aiTurn = () => {
+  if (huntStage === 0) {
+    player1.checkHit(player2, pickNextHit());
+  }
+  else if (huntStage === 1) {
+
+  }
+};
+
+
+console.log(deleteDirection(hunt.huntPossibilities, 'left'));
+
+
