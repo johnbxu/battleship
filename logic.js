@@ -9,11 +9,11 @@ const player2 = new Player('2');
 
 player1.initEmptyBoard('self', 10);
 player1.initEmptyBoard('enemy', 10);
-player1.placeShip('Cruiser', [3, 5], 'right');
-player1.placeShip('Battleship', [1, 3], 'left');
-player1.placeShip('Carrier', [4, 3], 'down');
-player1.placeShip('Submarine', [9, 8], 'up');
-player1.placeShip('Destroyer', [0, 9], 'down');
+player1.placeShip('Cruiser', [0, 0], 'right');
+player1.placeShip('Battleship', [0, 7], 'left');
+player1.placeShip('Carrier', [2, 5], 'down');
+player1.placeShip('Submarine', [9, 8], 'down');
+player1.placeShip('Destroyer', [8, 2], 'down');
 
 player2.initEmptyBoard('self', 10);
 player2.placeShip('Cruiser', [3, 5], 'right');
@@ -31,36 +31,8 @@ player2.placeShip('Destroyer', [0, 9], 'down');
 // player1.checkHit(player2, [6, 5]);
 // player1.checkHit(player2, [7, 5]);
 // player1.checkHit(player2, [8, 5]);
-player1.checkHit(player2, player1.randomHit());
-player1.checkHit(player2, player1.randomHit());
-player1.checkHit(player2, player1.randomHit());
-player1.checkHit(player2, player1.randomHit());
-player1.checkHit(player2, player1.randomHit());
-player1.checkHit(player2, player1.randomHit());
-player1.checkHit(player2, player1.randomHit());
-player1.checkHit(player2, player1.randomHit());
-player1.checkHit(player2, player1.randomHit());
-player1.checkHit(player2, player1.randomHit());
-player1.checkHit(player2, player1.randomHit());
-player1.checkHit(player2, player1.randomHit());
-player1.checkHit(player2, player1.randomHit());
-player1.checkHit(player2, player1.randomHit());
-player1.checkHit(player2, player1.randomHit());
-player1.checkHit(player2, player1.randomHit());
-player1.checkHit(player2, player1.randomHit());
-player1.checkHit(player2, player1.randomHit());
-player1.checkHit(player2, player1.randomHit());
-player1.checkHit(player2, player1.randomHit());
-player1.checkHit(player2, player1.randomHit());
-player1.checkHit(player2, player1.randomHit());
-player1.checkHit(player2, player1.randomHit());
-player1.checkHit(player2, player1.randomHit());
-player1.checkHit(player2, player1.randomHit());
-player1.checkHit(player2, player1.randomHit());
-player1.checkHit(player2, player1.randomHit());
-player1.checkHit(player2, player1.randomHit());
-player1.checkHit(player2, player1.randomHit());
-player1.checkHit(player2, player1.randomHit());
+// player1.checkHit(player2, player1.randomHit());
+
 console.log('------------player 1 board--------------');
 console.log(player1.board);
 console.log('----------------------------------------');
@@ -105,5 +77,77 @@ console.log('----------------------------------------');
 
 
 
+const hunt = {
+  hunt: false,
+  huntStage: 0,
+  huntDirection: '',
+  huntPossibilities: ['up', 'down', 'left', 'right'],
+  hunts: [],
+  huntHits: [],
+};
+
+const randomHuntDirection = (directions) => directions[Math.floor(Math.random()*4)];
+const deleteDirection = (directions, direction) => directions.filter(d => d !== direction);
+const pickRandomCoord = (coords) => {
+  return coords[Math.floor(Math.random() * coords.length)];
+};
+
+const pickNextHit = (board) => {
+  const possibles = [];
+  for (let i = 0; i < board.length; i += 1) {
+    for (let j = 0; j < board.length; j += 1) {
+      if (board[i][j] === 0) { possibles.push ([i, j]); }
+    }
+  }
+  return pickRandomCoord(possibles);
+};
+const aiTurn = () => {
+  if (hunt.huntStage === 0) {
+    player1.checkHit(player2, pickNextHit(player1.enemyBoard));
+  }
+  else if (huntStage === 1) {
+
+  }
+};
 
 
+aiTurn();
+aiTurn();
+aiTurn();
+aiTurn();
+aiTurn();
+aiTurn();
+aiTurn();
+aiTurn();
+aiTurn();
+aiTurn();
+aiTurn();
+aiTurn();
+aiTurn();
+aiTurn();
+aiTurn();
+aiTurn();
+aiTurn();
+aiTurn();
+aiTurn();
+aiTurn();
+aiTurn();
+aiTurn();
+aiTurn();
+aiTurn();
+aiTurn();
+aiTurn();
+aiTurn();
+aiTurn();
+aiTurn();
+aiTurn();
+aiTurn();
+aiTurn();
+aiTurn();
+aiTurn();
+aiTurn();
+aiTurn();
+aiTurn();
+console.log('------------player 1 enemy board--------');
+console.log(player1.enemyBoard);
+console.log('----------------------------------------');
