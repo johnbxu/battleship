@@ -7,9 +7,11 @@ class Player {
     // onTheHunt AI object (implement later)
     this.hunt = {
       hunt: false,
+      huntStage: 0,
       huntDirection: '',
-      huntHistory: [],
-      nextHunt: [],
+      huntPossibilities: ['up', 'down', 'left', 'right'],
+      hunts: [],
+      huntHits: [],
     };
     this.shotsHistory = [];
     // ships state
@@ -143,8 +145,7 @@ class Player {
     };
     // helper function for checking if ship is out of bounds
     this.outOfBounds = function outOfBounds(coord) {
-      return (!(coord[0] >= 0 && coord[0] <= this.board.length)
-        || !(coord[1] >= 0 && coord[1] <= this.board[0].length));
+      return !(coord[0] >= 0 && coord[0] < this.board.length && coord[1] >= 0 && coord[1] < this.board.length);
     };
     // takes ship size, start coordinate and direction, and generates end coordinate
     this.shipEndCoord = function shipEndCoord(shipSize, startCoord, direction) {
@@ -172,6 +173,7 @@ class Player {
       this.enemyBoard[y][x] = 3;
       return false;
     };
+
     // updates enemy player's board and ship states to reflect a hit
     this.updateEnemyShip = function updateEnemyShip(player, coord) {
       // const y = coord[0];
@@ -186,6 +188,28 @@ class Player {
           player.ships[ship].sunk = true;
         }
       });
+    };
+
+    this.randomHuntDirection = function randomHuntDirection(directions) { return directions[Math.floor(Math.random()*4)]; };
+    this.deleteDirection = function deleteDirection (directions, direction) { return directions.filter(d => d !== direction); };
+    this.pickRandomCoord = function pickRandomCoord (coords) { return coords[Math.floor(Math.random() * coords.length)]; };
+    this.pickNextHit = (board) => {
+      const possibles = [];
+      for (let i = 0; i < board.length; i += 1) {
+        for (let j = 0; j < board.length; j += 1) {
+          if (board[i][j] === 0) { possibles.push ([i, j]); }
+        }
+      }
+      return this.pickRandomCoord(possibles);
+    };
+    this.aiTurn = function aiTurn(player) {
+      if (this.hunt.huntStage === 0) {
+        const nextHit = this.pickNextHit(this.enemyBoard);
+        this.checkHit(player, );
+      }
+      else if (huntStage === 1) {
+
+      }
     };
     // // onTheHuntAI behaviour (implement later)
     // this.checkHunt = function checkHunt() {
@@ -211,39 +235,5 @@ class Player {
 module.exports = Player;
 
 
-const hunt = {
-  hunt: false,
-  huntStage: 0,
-  huntDirection: '',
-  huntPossibilities: ['up', 'down', 'left', 'right'],
-  hunts: [],
-  huntHits: [],
-};
-const randomHuntDirection = (directions) => directions[Math.floor(Math.random()*4)];
-const deleteDirection = (directions, direction) => directions.filter(d => d !== direction);
-const pickRandomCoord = (coords) => {
-  return coords[Math.floor(Math.random() * coords.length)];
-};
-
-const pickNextHit = (board) => {
-  const possibles = [];
-  for (let i = 0; i < board.length; i += 1) {
-    for (let j = 0; j < board.length; j += 1) {
-      if (board[i][j] === 0) { possibles.push ([i, j]); }
-    }
-  }
-  return pickRandomCoord(possibles);
-};
-const aiTurn = () => {
-  if (huntStage === 0) {
-    player1.checkHit(player2, pickNextHit());
-  }
-  else if (huntStage === 1) {
-
-  }
-};
-
-
-console.log(deleteDirection(hunt.huntPossibilities, 'left'));
 
 
