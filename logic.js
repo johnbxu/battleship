@@ -1,6 +1,7 @@
 $(function() {
 
-  const state = 0;
+  let state = 0;
+  let shipsPlaced = 0;
   class Player {
     constructor(name) {
       this.name = `Player_ ${name}`;
@@ -112,7 +113,8 @@ $(function() {
         this.ships[shipName].coordinates = [...shipCoordsArray];
         this.ships[shipName].placed = true;
         for (const coord of shipCoordsArray) {
-          $(this.toId(coord)).css('background-color', 'yellow');
+          let id = this.toId(coord).slice(0, 1) + 'b' + this.toId(coord).slice(1, 3);
+          $(id).css('background-color', 'yellow');
         }
       };
       // during placement of a ship, checks if a ship is already present
@@ -178,8 +180,9 @@ $(function() {
           this.updateEnemyShip(player, coord);
           this.shotsHistory.push(coord);
           $(jqCoord).css('background-color', 'red');
+          $('.layout').append('<p>Test</p>');
           return true;
-        } else {
+        } else if (player.board[y][x] === 0) {
           console.log('Miss');
           this.enemyBoard[y][x] = 3;
           $(jqCoord).css('background-color', 'blue');
@@ -244,14 +247,14 @@ $(function() {
 
       // }
 
-      // helper function to translate coordinate to html id
+      // helper functions to translate between coordinate and html element id
       this.toId = (coord) => {
         return '#' + coord.toString().replace(',', '');
       };
       this.toCoord = (id) => {
         const arr = [];
-        arr.push (Number(id[0]));
-        arr.push (Number(id[1]));
+        arr.push(Number(id.replace('b', '')[0]));
+        arr.push(Number(id.replace('b', '')[1]));
         return arr;
       };
 
@@ -282,21 +285,69 @@ $(function() {
   player2.placeShip('Submarine', [1, 5], 'down');
 
 
-
-
-
-
-  if (state === 0) {
-
-    console.log('place first ship');
-    if (player1.ships.Carrier.placed === false) {
-      $('.square').click(function(event){
-        const coord = player1.toCoord((event.target.id));
-        player1.placeShip('Carrier', coord, 'down');
-      });
+  // this handles button clicks
+  let direction = 'down';
+  $('#btnOne').click(function(){
+    if (state === 0) {
+      // pre-game
+      state = 1;
+      $('#btnOne').html('Vertical');
+      $('#btnTwo').html('Horizontal');
     }
+    else if (state === 1) {
+      // setup: this button will switch placement direction to vertical
+      direction = 'down';
+    }
+  });
+  $('#btnTwo').click(function(){
+    // if (state === 0) { // pre-game - set players to two (not implemented) }
+    if (state === 1) {
+      // setup: this button will switch placement direction to horizontal
+      direction = 'right';
+    }
+  });
 
-  }
+  const placeShip = (player, ship, coord, orientation) => {
+    const shipNames = {
+      0: 'Carrier',
+      1: 'Battleship',
+      2: 'Cruiser',
+      3: 'Submarine',
+      4: 'Destroyer',
+    };
+    const shipName = shipNames[ship];
+    if (player.ships[shipName].placed === false) {
+      console.log('Place' + shipName);
+      player.placeShip(shipName, coord, orientation);
+      if (player.ships[shipName].placed) { shipsPlaced += 1; }
+    }
+  };
+
+
+  // this handles square clicks
+  $('.square').click(function(event){
+    if (state === 1) {
+      const coord = player1.toCoord((event.target.id));
+      placeShip(player1, shipsPlaced, coord, direction);
+      if (shipsPlaced === 5) {
+        state = 2;
+        $('#btnOne').remove();
+        $('#btnTwo').remove();
+      }
+    }
+    if (state === 2) {
+      // console.log((event.target.id).parent());
+      console.log($(event.target).parents().hasClass('top'));
+      if ($(event.target).parents().hasClass('top')) {
+        player1.checkHit(player2, player1.toCoord(event.target.id));
+        console.log(player1.toCoord(event.target.id));
+
+      }
+
+    }
+  });
+
+
 
   // console.log(player2);
 
@@ -363,34 +414,43 @@ $(function() {
 
 
 
-  player2.aiTurn(player1);
-  player2.aiTurn(player1);
-  player2.aiTurn(player1);
-  player2.aiTurn(player1);
-  player2.aiTurn(player1);
-  player2.aiTurn(player1);
-  player2.aiTurn(player1);
-  player2.aiTurn(player1);
-  player2.aiTurn(player1);
-  player2.aiTurn(player1);
-  player2.aiTurn(player1);
-  player2.aiTurn(player1);
-  player2.aiTurn(player1);
-  player2.aiTurn(player1);
-  player2.aiTurn(player1);
-  player2.aiTurn(player1);
-  player2.aiTurn(player1);
-  console.log('------------player 1 board--------------');
-  console.log(player1.board);
-  console.log('----------------------------------------');
-  console.log('------------player 1 enemy board--------------');
-  console.log(player1.enemyBoard);
-  console.log('----------------------------------------');
-  console.log('------------player 2 board--------');
-  console.log(player2.board);
-  console.log('----------------------------------------');
-  console.log('------------player 2 enemy board--------');
-  console.log(player2.enemyBoard);
-  console.log('----------------------------------------');
+  // player2.aiTurn(player1);
+  // player2.aiTurn(player1);
+  // player2.aiTurn(player1);
+  // player2.aiTurn(player1);
+  // player2.aiTurn(player1);
+  // player2.aiTurn(player1);
+  // player2.aiTurn(player1);
+  // player2.aiTurn(player1);
+  // player2.aiTurn(player1);
+  // player2.aiTurn(player1);
+  // player2.aiTurn(player1);
+  // player2.aiTurn(player1);
+  // player2.aiTurn(player1);
+  // player2.aiTurn(player1);
+  // player2.aiTurn(player1);
+  // player2.aiTurn(player1);
+  // player2.aiTurn(player1);
+  // console.log('------------player 1 board--------------');
+  // console.log(player1.board);
+  // console.log('----------------------------------------');
+  // console.log('------------player 1 enemy board--------------');
+  // console.log(player1.enemyBoard);
+  // console.log('----------------------------------------');
+  // console.log('------------player 2 board--------');
+  // console.log(player2.board);
+  // console.log('----------------------------------------');
+  // console.log('------------player 2 enemy board--------');
+  // console.log(player2.enemyBoard);
+  // console.log('----------------------------------------');
+
+
+
+
+
+
+
 
 });
+
+

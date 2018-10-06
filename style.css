@@ -145,7 +145,7 @@ td, th {
   display: inline-block;
 }
 
-.buttons {
+button {
   position: relative;
   display: block;
   width: 150px;

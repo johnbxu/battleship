@@ -11,15 +11,35 @@
 * implement later: auto placement of ships
 
 ##playing phase
-while (!gameEnd) {
-  while (turn === p1) {
-    player 1's turn
-  }
-}
-  while (turn === p2) {
-    player 2's turn
-  }
-}
+
+* clickable elements:
+  * ship grid squares
+  * buttons
+
+1. state = 0
+  * this is the pre-game phase. Players are able to choose single or multiplayer options (multiplayer not implemented yet)
+  * ship grid squares: inactive
+  * buttons: clickable
+    * top button: single player
+    * buttom button: multiplayer (not implemented)
+
+2. state = 1
+  * this is the setup phase. Players place their ships one by one starting from carrier
+  * ship grid squares: active top
+    * different ships will have different placement shadows
+    * once all ships are placed, move onto state 2
+  * buttons: clickable
+    * top button: vertical
+    * bottom button: horizontal
+
+3. state = 2
+  * play phase. player shoots at opponent's board
+  * ship grid squares: active bottom
+    * only blank squares are clickable
+  * buttons: inactive
+
+
+
 
 ###player 1 turn:
 * pick a coordinate
