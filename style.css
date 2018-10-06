@@ -5,6 +5,26 @@
   padding: 0;
 }
 
+button {
+  position: relative;
+  display: block;
+  width: 150px;
+  height: 40px;
+
+  font-size: 1.2em;
+
+  margin: 125px auto;
+  border: 2px solid black;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+
+  text-align: center;
+  line-height: 40px;
+
+  cursor: pointer;
+}
+
 h1 {
   margin-top: 50px;
   text-align: center;
@@ -68,42 +88,6 @@ td, th {
   border: 1px solid black;
 }
 
-.grid {
-  position: absolute;
-  width: 300px;
-  height: 300px;
-  background: rgba(0,0,0,0);
-  margin-left: 30px;
-  font-size: 0;
-}
-
-.aTops {
-  width: 29px;
-  height: 29px;
-  border-top: 1px solid black;
-  border-right: 1px solid black;
-  display: table-cell;
-  vertical-align: middle;
-
-  font-weight: bold;
-  color: black;
-  text-align: center;
-}
-
-.aLeft {
-  position: relative;
-  width: 29px;
-  height: 29px;
-  border-top: 1px solid black;
-  border-right: 1px solid black;
-  display: block;
-  line-height: 29px;
-
-  font-weight: bold;
-  color: black;
-  text-align: center;
-}
-
 .highlight {
   background: rgba(144,144,144,0.9);
 }
@@ -126,6 +110,10 @@ td, th {
 
 }
 
+.sunkList {
+  padding-left: 20px
+}
+
 .console {
   position: relative;
   width: 275px;
@@ -145,26 +133,6 @@ td, th {
   display: inline-block;
 }
 
-button {
-  position: relative;
-  display: block;
-  width: 150px;
-  height: 40px;
-
-  font-size: 1.2em;
-
-  margin: 125px auto;
-  border: 2px solid black;
-  border-radius: 5px;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-
-  text-align: center;
-  line-height: 40px;
-
-  cursor: pointer;
-}
-
 .hit {
   background: red;
 }
@@ -173,10 +141,10 @@ button {
   background: blue;
 }
 
-.square:hover {
+/*.square:hover {
   background-color: grey;
 }
-
+*/
 @keyframes expand {
   0% {
     width: 0px;

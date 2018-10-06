@@ -4,7 +4,7 @@ $(function() {
   let shipsPlaced = 0;
   class Player {
     constructor(name) {
-      this.name = `Player_ ${name}`;
+      this.name = `Player_${name}`;
       this.boardSize = 0;
       this.board = []; // board state
       this.enemyBoard = []; // player's view of enemy board
@@ -18,6 +18,7 @@ $(function() {
       };
       this.shotsHistory = [];
       // ships state
+      this.shipsSunk = [];
       this.ships = {
         Carrier: {
           name: 'Carrier',
@@ -70,7 +71,7 @@ $(function() {
         const endCoord = this.shipEndCoord(shipSize, startCoord, direction);
         const shipCoordsArray = this.shipCoords(startCoord, endCoord, direction).slice(0);
         if (this.ships[shipName].placed) {
-          console.log('This ship was placed already');
+          $('.text').html('This ship was placed already');
         } else if (this.checkShipValidity(shipSize, startCoord, direction)
           && this.checkShipCollision(shipCoordsArray)) {
           this.initShip(shipName, shipCoordsArray);
@@ -79,7 +80,7 @@ $(function() {
             this.board[shipCoordsArray[i][0]][shipCoordsArray[i][1]] = 1;
           }
         } else {
-          console.log('invalid placement');
+          $('.text').html('invalid placement');
         }
       };
 
@@ -112,9 +113,11 @@ $(function() {
       this.initShip = function initShip(shipName, shipCoordsArray) {
         this.ships[shipName].coordinates = [...shipCoordsArray];
         this.ships[shipName].placed = true;
-        for (const coord of shipCoordsArray) {
-          let id = this.toId(coord).slice(0, 1) + 'b' + this.toId(coord).slice(1, 3);
-          $(id).css('background-color', 'yellow');
+        if(this.name == 'Player_1') {
+          for (const coord of shipCoordsArray) {
+            let id = this.toId(coord).slice(0, 1) + 'b' + this.toId(coord).slice(1, 3);
+            $(id).css('background-color', 'yellow');
+          }
         }
       };
       // during placement of a ship, checks if a ship is already present
@@ -144,11 +147,11 @@ $(function() {
       this.checkShipValidity = function checkShipValidity(shipSize, startCoord, direction) {
         const endCoord = this.shipEndCoord(shipSize, startCoord, direction);
         if (this.outOfBounds(startCoord)) {
-          console.log('ship start location is out of bounds');
+          $('.text').html('ship start location is out of bounds');
           return false;
         }
         if (this.outOfBounds(endCoord)) {
-          console.log('ship end location is out of bounds');
+          $('.text').html('ship end location is out of bounds');
           return false;
         }
 
@@ -176,14 +179,13 @@ $(function() {
         if (player.board[y][x] === 1) {
           this.enemyBoard[y][x] = 2;
           player.board[y][x] = 2;
-          console.log('Hit!');
+          $('.text').html('Hit!');
           this.updateEnemyShip(player, coord);
           this.shotsHistory.push(coord);
           $(jqCoord).css('background-color', 'red');
-          $('.layout').append('<p>Test</p>');
           return true;
         } else if (player.board[y][x] === 0) {
-          console.log('Miss');
+          $('.text').html('Miss');
           this.enemyBoard[y][x] = 3;
           $(jqCoord).css('background-color', 'blue');
 
@@ -201,8 +203,10 @@ $(function() {
           if (shipCoords.indexOf(shipCoord) !== -1) {
             player.ships[ship].damage += 1;
           }
-          if (player.ships[ship].damage === player.ships[ship].size) {
+          if (player.ships[ship].damage === player.ships[ship].size && !player.ships[ship].sunk) {
             player.ships[ship].sunk = true;
+            player.shipsSunk.push(ship);
+            $('.sunkList').append(`<p>${ship}</p>`);
           }
         });
       };
@@ -239,7 +243,6 @@ $(function() {
         while (JSON.stringify(this.shotsHistory).indexOf(JSON.stringify(randomCoord)) !== -1) {
           randomCoord = [Math.floor(Math.random() * 10), Math.floor(Math.random() * 10)];
         }
-        console.log(randomCoord);
         return randomCoord;
       };
       // // place a ship in a random coordinate (to implement later)
@@ -261,6 +264,20 @@ $(function() {
     }
   }
 
+  const shipNames = {
+    0: 'Carrier',
+    1: 'Battleship',
+    2: 'Cruiser',
+    3: 'Submarine',
+    4: 'Destroyer',
+  };
+  const shipSizes = {
+    0: 5,
+    1: 4,
+    2: 3,
+    3: 3,
+    4: 2,
+  };
 
   const player1 = new Player('1');
   const player2 = new Player('2');
@@ -293,10 +310,14 @@ $(function() {
       state = 1;
       $('#btnOne').html('Vertical');
       $('#btnTwo').html('Horizontal');
+      $('.text').html('Place Carrier');
     }
     else if (state === 1) {
       // setup: this button will switch placement direction to vertical
       direction = 'down';
+    }
+    else {
+      // play phase
     }
   });
   $('#btnTwo').click(function(){
@@ -307,19 +328,17 @@ $(function() {
     }
   });
 
+
+
   const placeShip = (player, ship, coord, orientation) => {
-    const shipNames = {
-      0: 'Carrier',
-      1: 'Battleship',
-      2: 'Cruiser',
-      3: 'Submarine',
-      4: 'Destroyer',
-    };
     const shipName = shipNames[ship];
-    if (player.ships[shipName].placed === false) {
-      console.log('Place' + shipName);
+    if (!player.ships[shipName].placed) {
       player.placeShip(shipName, coord, orientation);
-      if (player.ships[shipName].placed) { shipsPlaced += 1; }
+      if (player.ships[shipName].placed) {
+        if (shipsPlaced < 4) { $('.text').html('Place ' + shipNames[ship + 1]); }
+        if (shipsPlaced == 4) { $('.text').html('Click on a square to shoot'); }
+        shipsPlaced += 1;
+      }
     }
   };
 
@@ -333,20 +352,47 @@ $(function() {
         state = 2;
         $('#btnOne').remove();
         $('#btnTwo').remove();
+        $('.layout').prepend('<h3 style="padding-left: 10px;">Ships Sunk:</h3>');
       }
     }
     if (state === 2) {
-      // console.log((event.target.id).parent());
-      console.log($(event.target).parents().hasClass('top'));
       if ($(event.target).parents().hasClass('top')) {
         player1.checkHit(player2, player1.toCoord(event.target.id));
-        console.log(player1.toCoord(event.target.id));
-
       }
-
     }
   });
 
+  // mouseover
+  $('.square').hover(
+    function(event) {
+
+      if ($(event.target).parents().hasClass('bottom') && state === 1) {
+        const coord = player1.toCoord(event.target.id);
+        const ids = shipHover(shipsPlaced, coord, direction).filter(ele => ele.length === 3);
+        for (let id of ids) {
+          $(id.slice(0, 1) + 'b' + id.slice(1, 3)).addClass('highlight');
+        }
+      }
+
+    }, function(event) {
+
+      if ($(event.target).parents().hasClass('bottom') && state === 1) {
+        const coord = player1.toCoord(event.target.id);
+        const ids = shipHover(shipsPlaced, coord, direction);
+        for (let id of ids) {
+          $(id.slice(0, 1) + 'b' + id.slice(1, 3)).removeClass('highlight');
+        }
+      }
+
+    }
+  );
+
+  const shipHover = (ship, coord, direction) => {
+    const end = player1.shipEndCoord(shipSizes[ship], coord, direction);
+    const coords = player1.shipCoords(coord, end, direction);
+    return ids = coords.map(ele => player1.toId(ele));
+
+  };
 
 
   // console.log(player2);
