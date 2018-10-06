@@ -165,6 +165,18 @@ td, th {
   cursor: pointer;
 }
 
+.hit {
+  background: red;
+}
+
+.miss {
+  background: blue;
+}
+
+.square:hover {
+  background-color: grey;
+}
+
 @keyframes expand {
   0% {
     width: 0px;
