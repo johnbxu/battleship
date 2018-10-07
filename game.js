@@ -14,7 +14,7 @@ $(function() {
         huntStage: 0,
         huntDirection: '',
         huntPossibilities: ['up', 'down', 'left', 'right'],
-        hunts: [],
+        currHunt: [],
         huntHits: [],
       };
       this.shotsHistory = [];
@@ -62,6 +62,7 @@ $(function() {
           coordinates: [],
         },
       };
+
       // helper function to log board state
       this.drawBoard = function drawBoard(player) {
         console.log([player].board);
@@ -177,20 +178,33 @@ $(function() {
         const y = coord[0];
         const x = coord[1];
         let jqCoord = this.toId(coord);
-        if (player.board[y][x] === 1) {
+        if (this.enemyBoard[y][x] !== 0) {
+          return false;
+        } else if (player.board[y][x] === 1) {
           player.board[y][x] = 2;
           this.enemyBoard[y][x] = 2;
           this.updateEnemyShip(player, coord);
           this.shotsHistory.push(coord);
-          $('.text').html('Hit!');
-          $(jqCoord).css('background-color', 'red');
+          if (this.name === 'Player_1') {
+            $('.text').html('Hit!');
+            $(jqCoord).css('background-color', 'red');
+          } else {
+            $(jqCoord.slice(0, 1) + 'b' + jqCoord.slice(1, 3)).css('background-color', 'red');
+          }
+
           if (player.shipsSunk.length === 5) {
             state = 3;
           }
+          return true;
         } else if (player.board[y][x] === 0) {
           this.enemyBoard[y][x] = 3;
-          $('.text').html('Miss');
-          $(jqCoord).css('background-color', 'blue');
+          if (this.name === 'Player_1') {
+            $('.text').html('Miss');
+            $(jqCoord).css('background-color', 'blue');
+          } else {
+            $(jqCoord.slice(0, 1) + 'b' + jqCoord.slice(1, 3)).css('background-color', 'blue');
+          }
+          return true;
         }
       };
 
@@ -213,6 +227,35 @@ $(function() {
       this.randomHuntDirection = function randomHuntDirection(directions) { return directions[Math.floor(Math.random()*4)]; };
       this.deleteDirection = function deleteDirection (directions, direction) { return directions.filter(d => d !== direction); };
       this.pickRandomCoord = function pickRandomCoord (coords) { return coords[Math.floor(Math.random() * coords.length)]; };
+      this.pickHuntDirection = function pickHuntDirection (firstHitCoords) {
+        if (firstHitCoords[0] === 0) {
+          this.hunt.huntPossibilities.filter(ele => !(ele == 'up'));
+        }
+        if (firstHitCoords[0] === 9) {
+          this.hunt.huntPossibilities.filter(ele => !(ele == 'down'));
+        }
+        if (firstHitCoords[1] === 0) {
+          this.hunt.huntPossibilities.filter(ele => !(ele == 'left'));
+        }
+        if (firstHitCoords[1] === 9) {
+          this.hunt.huntPossibilities.filter(ele => !(ele == 'right'));
+        }
+        return Math.floor(Math.random() * this.hunt.huntPossibilities.length);
+      };
+      this.huntNext = function (direction, currentHunt) {
+        let hitCoord;
+        if (direction == 'up') {
+          hitCoord = [currentHunt[currentHunt[0] - 1], currentHunt[1]];
+        } else if (direction == 'down') {
+          hitCoord = [currentHunt[currentHunt[0] + 1], currentHunt[1]];
+        } else if (direction == 'left') {
+          hitCoord = [currentHunt[currentHunt[0]], currentHunt[1] - 1];
+        } else if (direction == 'right') {
+          hitCoord = [currentHunt[currentHunt[0]], currentHunt[1] + 1];
+        }
+        this.checkHit(player1, hitCoord);
+        this.hunt.currHunt = hitCoord;
+      };
       this.pickNextHit = (board) => {
         const possibles = [];
         for (let i = 0; i < board.length; i += 1) {
@@ -225,12 +268,24 @@ $(function() {
       this.aiTurn = function aiTurn(player) {
         if (this.hunt.huntStage === 0) {
           const nextHit = this.pickNextHit(this.enemyBoard);
-          this.checkHit(player, nextHit);
+          if (this.checkHit(player, nextHit)) {
+            this.hunt.huntStage = 1;
+            this.hunt.huntHits.push(nextHit);
+            this.hunt.currHunt = nextHit;
+          }
         }
         else if (this.hunt.huntStage === 1) {
+          if (!this.hunt.huntDirection) {
+            this.hunt.huntDirection = this.pickHuntDirection(this.hunt.huntHits[0]);
+          }
+          this.huntNext(this.hunt.huntDirection, this.hunt.currHunt);
+
 
         }
+        turnTracker = 1;
       };
+
+
 
       this.randomHit = () => {
         let randomCoord = [Math.floor(Math.random() * 10), Math.floor(Math.random() * 10)];
@@ -272,14 +327,7 @@ $(function() {
     3: 3,
     4: 2,
   };
-  const hunt = {
-    hunt: false,
-    huntStage: 0,
-    huntDirection: '',
-    huntPossibilities: ['up', 'down', 'left', 'right'],
-    hunts: [],
-    huntHits: [],
-  };
+
 
   // game state functions
   const shipHover = (ship, coord, direction) => {
@@ -360,14 +408,20 @@ $(function() {
       placeShip(player1, shipsPlaced, coord, direction);
       if (shipsPlaced === 5) {
         state = 2;
+        turnTracker = 1;
         $('#btnOne').remove();
         $('#btnTwo').remove();
         $('.layout').prepend('<h3 style="padding-left: 10px;">Ships Sunk:</h3>');
       }
     }
-    if (state === 2) {
+    if (state === 2 && turnTracker === 1) {
       if ($(event.target).parents().hasClass('top')) {
-        player1.checkHit(player2, player1.toCoord(event.target.id));
+        if (player1.checkHit(player2, player1.toCoord(event.target.id))) {
+          turnTracker = 2;
+        }
+        if (turnTracker === 2) {
+          player2.aiTurn(player1);
+        }
       }
       if (state === 3) {
         alert('You"ve Won!');
