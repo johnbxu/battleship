@@ -10,18 +10,12 @@ button {
   display: block;
   width: 150px;
   height: 40px;
-
   font-size: 1.2em;
-
   margin: 125px auto;
   border: 2px solid black;
   border-radius: 5px;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-
   text-align: center;
   line-height: 40px;
-
   cursor: pointer;
 }
 
@@ -120,9 +114,7 @@ td, th {
   height: 310px;
   margin-top: 36px;
   display: block;
-
   border: 2px solid black;
-
 }
 
 .text {
@@ -141,69 +133,6 @@ td, th {
   background: blue;
 }
 
-/*.square:hover {
+.square:hover {
   background-color: grey;
-}
-*/
-@keyframes expand {
-  0% {
-    width: 0px;
-    height: 0px;
-    top: 12.5px;
-    left: 12.5px;
-  }
-  50% {
-    width: 25px;
-    height: 25px;
-    top: 0px;
-    left: 0px;
-  }
-  100% {
-    width: 15px;
-    height: 15px;
-    top: 5px;
-    left: 5px;
-  }
-}
-
-@-webkit-keyframes expand {
-  0% {
-    width: 0px;
-    height: 0px;
-    top: 12.5px;
-    left: 12.5px;
-  }
-  50% {
-    width: 25px;
-    height: 25px;
-    top: 0px;
-    left: 0px;
-  }
-  100% {
-    width: 15px;
-    height: 15px;
-    top: 5px;
-    left: 5px;
-  }
-}
-
-@-moz-keyframes expand {
-  0% {
-    width: 0px;
-    height: 0px;
-    top: 12.5px;
-    left: 12.5px;
-  }
-  50% {
-    width: 25px;
-    height: 25px;
-    top: 0px;
-    left: 0px;
-  }
-  100% {
-    width: 15px;
-    height: 15px;
-    top: 5px;
-    left: 5px;
-  }
 }
