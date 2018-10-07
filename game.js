@@ -2,6 +2,7 @@ $(function() {
 
   let state = 0;
   let shipsPlaced = 0;
+  let turnTracker = 0;
   class Player {
     constructor(name) {
       this.name = `Player_${name}`;
@@ -177,26 +178,24 @@ $(function() {
         const x = coord[1];
         let jqCoord = this.toId(coord);
         if (player.board[y][x] === 1) {
-          this.enemyBoard[y][x] = 2;
           player.board[y][x] = 2;
-          $('.text').html('Hit!');
+          this.enemyBoard[y][x] = 2;
           this.updateEnemyShip(player, coord);
           this.shotsHistory.push(coord);
+          $('.text').html('Hit!');
           $(jqCoord).css('background-color', 'red');
-          return true;
+          if (player.shipsSunk.length === 5) {
+            state = 3;
+          }
         } else if (player.board[y][x] === 0) {
-          $('.text').html('Miss');
           this.enemyBoard[y][x] = 3;
+          $('.text').html('Miss');
           $(jqCoord).css('background-color', 'blue');
-
-          return false;
         }
       };
 
       // updates enemy player's board and ship states to reflect a hit
       this.updateEnemyShip = function updateEnemyShip(player, coord) {
-        // const y = coord[0];
-        // const x = coord[1];
         Object.keys(player.ships).forEach((ship) => {
           const shipCoords = JSON.stringify(player.ships[ship].coordinates);
           const shipCoord = JSON.stringify(coord);
@@ -232,12 +231,7 @@ $(function() {
 
         }
       };
-      // // onTheHuntAI behaviour (implement later)
-      // this.checkHunt = function checkHunt() {
-      //   if (this.hunt === true) {
 
-      //   }
-      // };
       this.randomHit = () => {
         let randomCoord = [Math.floor(Math.random() * 10), Math.floor(Math.random() * 10)];
         while (JSON.stringify(this.shotsHistory).indexOf(JSON.stringify(randomCoord)) !== -1) {
@@ -277,6 +271,33 @@ $(function() {
     2: 3,
     3: 3,
     4: 2,
+  };
+  const hunt = {
+    hunt: false,
+    huntStage: 0,
+    huntDirection: '',
+    huntPossibilities: ['up', 'down', 'left', 'right'],
+    hunts: [],
+    huntHits: [],
+  };
+
+  // game state functions
+  const shipHover = (ship, coord, direction) => {
+    const end = player1.shipEndCoord(shipSizes[ship], coord, direction);
+    const coords = player1.shipCoords(coord, end, direction);
+    return ids = coords.map(ele => player1.toId(ele));
+
+  };
+  const placeShip = (player, ship, coord, orientation) => {
+    const shipName = shipNames[ship];
+    if (!player.ships[shipName].placed) {
+      player.placeShip(shipName, coord, orientation);
+      if (player.ships[shipName].placed) {
+        if (shipsPlaced < 4) { $('.text').html('Place ' + shipNames[ship + 1]); }
+        if (shipsPlaced == 4) { $('.text').html('Click on a square to shoot'); }
+        shipsPlaced += 1;
+      }
+    }
   };
 
   const player1 = new Player('1');
@@ -330,22 +351,11 @@ $(function() {
 
 
 
-  const placeShip = (player, ship, coord, orientation) => {
-    const shipName = shipNames[ship];
-    if (!player.ships[shipName].placed) {
-      player.placeShip(shipName, coord, orientation);
-      if (player.ships[shipName].placed) {
-        if (shipsPlaced < 4) { $('.text').html('Place ' + shipNames[ship + 1]); }
-        if (shipsPlaced == 4) { $('.text').html('Click on a square to shoot'); }
-        shipsPlaced += 1;
-      }
-    }
-  };
 
 
   // this handles square clicks
   $('.square').click(function(event){
-    if (state === 1) {
+    if (state === 1 && $(event.target).parents().hasClass('bottom')) {
       const coord = player1.toCoord((event.target.id));
       placeShip(player1, shipsPlaced, coord, direction);
       if (shipsPlaced === 5) {
@@ -359,13 +369,16 @@ $(function() {
       if ($(event.target).parents().hasClass('top')) {
         player1.checkHit(player2, player1.toCoord(event.target.id));
       }
+      if (state === 3) {
+        alert('You"ve Won!');
+        $('.sunkList').append('<button onclick="window.location.reload()">Play Again</button>');
+      }
     }
   });
 
   // mouseover
   $('.square').hover(
     function(event) {
-
       if ($(event.target).parents().hasClass('bottom') && state === 1) {
         const coord = player1.toCoord(event.target.id);
         const ids = shipHover(shipsPlaced, coord, direction).filter(ele => ele.length === 3);
@@ -386,25 +399,6 @@ $(function() {
 
     }
   );
-
-  const shipHover = (ship, coord, direction) => {
-    const end = player1.shipEndCoord(shipSizes[ship], coord, direction);
-    const coords = player1.shipCoords(coord, end, direction);
-    return ids = coords.map(ele => player1.toId(ele));
-
-  };
-
-
-  const hunt = {
-    hunt: false,
-    huntStage: 0,
-    huntDirection: '',
-    huntPossibilities: ['up', 'down', 'left', 'right'],
-    hunts: [],
-    huntHits: [],
-  };
-
-
 
 
   // player2.aiTurn(player1);
@@ -436,13 +430,6 @@ $(function() {
   // console.log('------------player 2 enemy board--------');
   // console.log(player2.enemyBoard);
   // console.log('----------------------------------------');
-
-
-
-
-
-
-
 
 });
 
