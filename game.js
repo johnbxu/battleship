@@ -270,8 +270,6 @@ $(function() {
       };
       this.checkValid = function (coord) { return !(coord[0] < 0 || coord[0] > 9 || coord[1] < 0 || coord[1] > 9); };
 
-// --------------------------------problem----------------------------------------//
-// huntStage isn't being advanced correctly
       this.aiTurn = function aiTurn(player) {
         if (this.hunt.huntStage === 0) {
           const thisHit = this.randomNextHit(this.enemyBoard);
@@ -381,11 +379,6 @@ $(function() {
 
   player1.initEmptyBoard('self', 10);
   player1.initEmptyBoard('enemy', 10);
-  // player1.placeShip('Carrier', [0, 0], 'down');
-  // player1.placeShip('Battleship', [0, 1], 'down');
-  // player1.placeShip('Destroyer', [0, 3], 'down');
-  // player1.placeShip('Cruiser', [0, 4], 'down');
-  // player1.placeShip('Submarine', [0, 5], 'down');
 
   player2.initEmptyBoard('enemy', 10);
   player2.initEmptyBoard('self', 10);
