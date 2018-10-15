@@ -3,6 +3,7 @@ $(function() {
   let state = 0;
   let shipsPlaced = 0;
   let turnTracker = 0;
+  let players = 1;
   class Player {
     constructor(name) {
       this.name = `Player_${name}`;
@@ -12,10 +13,12 @@ $(function() {
       this.hunt = { // onTheHunt AI object
         hunt: false,
         huntStage: 0,
-        huntDirection: '',
+        currDirection: '',
+        firstDirection: '',
         huntPossibilities: ['up', 'down', 'left', 'right'],
         currHunt: [],
-        huntHits: [],
+        huntMisses: [],
+        firstHit: [],
       };
       this.shotsHistory = [];
       // ships state
@@ -223,10 +226,19 @@ $(function() {
           }
         });
       };
+      this.randomNextHit = (board) => {
+        const possibles = [];
+        for (let i = 0; i < board.length; i += 1) {
+          for (let j = 0; j < board.length; j += 1) {
+            if (board[i][j] === 0) { possibles.push ([i, j]); }
+          }
+        }
+        return this.pickRandomCoord(possibles);
+      };
+      this.pickRandomCoord = function pickRandomCoord (coords) { return coords[Math.floor(Math.random() * coords.length)]; };
 
       this.randomHuntDirection = function randomHuntDirection(directions) { return directions[Math.floor(Math.random()*4)]; };
       this.deleteDirection = function deleteDirection (directions, direction) { return directions.filter(d => d !== direction); };
-      this.pickRandomCoord = function pickRandomCoord (coords) { return coords[Math.floor(Math.random() * coords.length)]; };
       this.pickHuntDirection = function pickHuntDirection (firstHitCoords) {
         if (firstHitCoords[0] === 0) {
           this.hunt.huntPossibilities.filter(ele => !(ele == 'up'));
@@ -240,47 +252,54 @@ $(function() {
         if (firstHitCoords[1] === 9) {
           this.hunt.huntPossibilities.filter(ele => !(ele == 'right'));
         }
-        return Math.floor(Math.random() * this.hunt.huntPossibilities.length);
+        const direction = this.hunt.huntPossibilities[Math.floor(Math.random() * this.hunt.huntPossibilities.length)];
+        return direction;
       };
       this.huntNext = function (direction, currentHunt) {
         let hitCoord;
         if (direction == 'up') {
-          hitCoord = [currentHunt[currentHunt[0] - 1], currentHunt[1]];
+          hitCoord = [currentHunt[0] - 1, currentHunt[1]];
         } else if (direction == 'down') {
-          hitCoord = [currentHunt[currentHunt[0] + 1], currentHunt[1]];
+          hitCoord = [currentHunt[0] + 1, currentHunt[1]];
         } else if (direction == 'left') {
-          hitCoord = [currentHunt[currentHunt[0]], currentHunt[1] - 1];
+          hitCoord = [currentHunt[0], currentHunt[1] - 1];
         } else if (direction == 'right') {
-          hitCoord = [currentHunt[currentHunt[0]], currentHunt[1] + 1];
+          hitCoord = [currentHunt[0], currentHunt[1] + 1];
         }
-        this.checkHit(player1, hitCoord);
-        this.hunt.currHunt = hitCoord;
+        return hitCoord;
       };
-      this.pickNextHit = (board) => {
-        const possibles = [];
-        for (let i = 0; i < board.length; i += 1) {
-          for (let j = 0; j < board.length; j += 1) {
-            if (board[i][j] === 0) { possibles.push ([i, j]); }
-          }
-        }
-        return this.pickRandomCoord(possibles);
-      };
+      this.checkValid = function (coord) { return !(coord[0] < 0 || coord[0] > 9 || coord[1] < 0 || coord[1] > 9); };
+
+// --------------------------------problem----------------------------------------//
+// huntStage isn't being advanced correctly
       this.aiTurn = function aiTurn(player) {
         if (this.hunt.huntStage === 0) {
-          const nextHit = this.pickNextHit(this.enemyBoard);
-          if (this.checkHit(player, nextHit)) {
-            this.hunt.huntStage = 1;
-            this.hunt.huntHits.push(nextHit);
-            this.hunt.currHunt = nextHit;
-          }
+          const thisHit = this.randomNextHit(this.enemyBoard);
+          this.checkHit(player, thisHit);
+          // if (player.board[thisHit[0]][thisHit[1]] === 2) {
+          //   this.hunt.huntStage = 1;
+          //   this.hunt.firstHit = thisHit;
+          //   this.hunt.currHunt = thisHit;
+          //   this.hunt.huntDirection = this.pickHuntDirection(thisHit);
+          //   this.hunt.firstDirection = this.hunt.huntDirection;
+          //   this.deleteDirection(this.hunt.huntPossibilities, this.hunt.huntDirection);
+          // }
         }
         else if (this.hunt.huntStage === 1) {
-          if (!this.hunt.huntDirection) {
-            this.hunt.huntDirection = this.pickHuntDirection(this.hunt.huntHits[0]);
-          }
-          this.huntNext(this.hunt.huntDirection, this.hunt.currHunt);
+          // const thisHit;
+          // do {
+          //   thisHit = this.huntNext(this.hunt.huntDirection, this.hunt.currHunt);
+          //   if (this.checkValid(thisHit)) {
+          //     this.checkHit(player1, thisHit);
+          //     this.hunt.currHunt = thisHit;
+          //     if (player.board[thisHit[0]][thisHit[1]] === 2) {
 
-
+          //     }
+          //   } else {
+          //     this.hunt.deleteDirection(this.hunt.huntDirection);
+          //     this.hunt.huntDirection = this.pickHuntDirection(thisHit);
+          //   }
+          // } while (!this.checkValid(thisHit));
         }
         turnTracker = 1;
       };
@@ -326,6 +345,12 @@ $(function() {
     2: 3,
     3: 3,
     4: 2,
+  };
+  const opposites = {
+    up: 'down',
+    down: 'up',
+    left: 'right',
+    right: 'left',
   };
 
 
@@ -390,16 +415,17 @@ $(function() {
     }
   });
   $('#btnTwo').click(function(){
-    // if (state === 0) { // pre-game - set players to two (not implemented) }
+    if (state === 0) {
+    // pre-game - set players to two (not implemented)
+      players = 2;
+      $('#topTitle').html('Player 1\'s Board');
+      $('#botTitle').html('Player 2\'s Board');
+    }
     if (state === 1) {
       // setup: this button will switch placement direction to horizontal
       direction = 'right';
     }
   });
-
-
-
-
 
   // this handles square clicks
   $('.square').click(function(event){
@@ -424,7 +450,11 @@ $(function() {
         }
       }
       if (state === 3) {
-        alert('You"ve Won!');
+        if (player1.ships.shipsSunk === 5){
+          alert ('You Lost!');
+        } else {
+          alert('You"ve Won!');
+        }
         $('.sunkList').append('<button onclick="window.location.reload()">Play Again</button>');
       }
     }
@@ -453,38 +483,6 @@ $(function() {
 
     }
   );
-
-
-  // player2.aiTurn(player1);
-  // player2.aiTurn(player1);
-  // player2.aiTurn(player1);
-  // player2.aiTurn(player1);
-  // player2.aiTurn(player1);
-  // player2.aiTurn(player1);
-  // player2.aiTurn(player1);
-  // player2.aiTurn(player1);
-  // player2.aiTurn(player1);
-  // player2.aiTurn(player1);
-  // player2.aiTurn(player1);
-  // player2.aiTurn(player1);
-  // player2.aiTurn(player1);
-  // player2.aiTurn(player1);
-  // player2.aiTurn(player1);
-  // player2.aiTurn(player1);
-  // player2.aiTurn(player1);
-  // console.log('------------player 1 board--------------');
-  // console.log(player1.board);
-  // console.log('----------------------------------------');
-  // console.log('------------player 1 enemy board--------------');
-  // console.log(player1.enemyBoard);
-  // console.log('----------------------------------------');
-  // console.log('------------player 2 board--------');
-  // console.log(player2.board);
-  // console.log('----------------------------------------');
-  // console.log('------------player 2 enemy board--------');
-  // console.log(player2.enemyBoard);
-  // console.log('----------------------------------------');
-
 });
 
 
